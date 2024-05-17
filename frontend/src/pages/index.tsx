@@ -1,15 +1,19 @@
 import { NextPageContext } from "next";
-import { getSession, signIn, signOut, useSession } from "next-auth/react";
+import { getSession, useSession } from "next-auth/react";
+import Auth from "../components/Auth/Auth";
+import Chat from "../components/Chat/Chat";
+import { Session } from "next-auth";
 
 export default function Home() {
   const { data: session } = useSession();
 
-  console.log("here is the data", session);
+  console.log("here is the session", session);
+
+  const reloadSession = () => {}
 
   return (
     <>
-      {session?.user ? <button onClick={() => signOut()}>SignOut</button> : <button onClick={() => signIn()}>SignIn</button>}
-      {session?.user?.name}
+      {session?.user?.username ? <Chat /> : <Auth session={session} reloadSession={reloadSession}/>}
     </>
   );
 }
