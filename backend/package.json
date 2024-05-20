@@ -3,16 +3,25 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon src/index.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@graphql-tools/schema": "^10.0.3",
     "apollo-server-core": "^3.13.0",
     "apollo-server-express": "^3.13.0",
     "express": "^4.19.2",
-    "graphql": "^16.8.1"
+    "graphql": "^16.8.1",
+    "lodash.merge": "^4.6.2",
+    "punycode": "^2.3.1",
+    "ts-node": "^10.9.2"
+  },
+  "devDependencies": {
+    "@types/lodash.merge": "^4.6.9",
+    "@types/punycode": "^2.1.4",
+    "nodemon": "^3.1.0"
   }
 }
