@@ -1,11 +1,14 @@
 import { gql } from "apollo-server-core";
 
-// this is not a typescript, it is a graph querying language
+// this is not a typescript, it is a schema definition language
 const typeDefs = gql`
+  # this user type does not expose any functionality to the client. It simply defines the structure of the user model in the application.
   type User {
     id: String
     username: String
   }
+
+  # to add functionality to the API you need to add fields to root types of the graphQl schema. which is query, mutation and subscription.
 
   # reading data here. declaring query
   type Query {
