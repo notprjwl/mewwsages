@@ -9,22 +9,20 @@ export default function Home() {
 
   console.log("here is the session", session);
 
-  const reloadSession = () => {}
+  const reloadSession = () => {
+    const event = new Event("visibilitychange");
+    document.dispatchEvent(event);
+  };
 
-  return (
-    <>
-      {session?.user?.username ? <Chat /> : <Auth session={session} reloadSession={reloadSession}/>}
-    </>
-  );
+  return <>{session?.user?.username ? <Chat /> : <Auth session={session} reloadSession={reloadSession} />}</>;
 }
 
-export async function getServerSideProps(context:NextPageContext) {
-  const session = await getSession(context)
+export async function getServerSideProps(context: NextPageContext) {
+  const session = await getSession(context);
 
-  return ({
-    props:{
+  return {
+    props: {
       session,
-    }
-  })
-  
+    },
+  };
 }
