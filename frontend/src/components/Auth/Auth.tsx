@@ -32,7 +32,7 @@ const Auth: React.FC<IAuthProps> = ({ session, reloadSession }) => {
         const {
           createUsername: { error },
         } = data;
-        throw new Error(error);
+        throw new Error(String(error));
       }
 
       toast.success('Username successfully created! 🚀');
