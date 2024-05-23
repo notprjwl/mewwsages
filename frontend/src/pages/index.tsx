@@ -14,7 +14,8 @@ export default function Home() {
     document.dispatchEvent(event);
   };
 
-  return <>{session?.user?.username ? <Chat /> : <Auth session={session} reloadSession={reloadSession} />}</>;
+  return (<>
+  {session?.user?.username ? <Chat session={session} /> : <Auth session={session} reloadSession={reloadSession} />}</>);
 }
 
 export async function getServerSideProps(context: NextPageContext) {
