@@ -14,28 +14,30 @@ const config = {
       center: true,
       padding: "2rem",
       screens: {
-        "2xl": { max: "1535px" },
-        // => @media (max-width: 1535px) { ... }
+        'sm': '640px',
+        // => @media (min-width: 640px) { ... }
   
-        xl: { max: "1279px" },
-        // => @media (max-width: 1279px) { ... }
+        'md': '768px',
+        // => @media (min-width: 768px) { ... }
   
-        lg: { max: "1023px" },
-        // => @media (max-width: 1023px) { ... }
+        'lg': '1024px',
+        // => @media (min-width: 1024px) { ... }
   
-        md: { max: "767px" },
-        // => @media (max-width: 767px) { ... }
+        'xl': '1280px',
+        // => @media (min-width: 1280px) { ... }
   
-        sm: { max: "639px" },
-        // => @media (max-width: 639px) { ... }
-        xs: { max: "200px" },
-      },
+        '2xl': '1536px',
+        // => @media (min-width: 1536px) { ... }
+      }
     },
     extend: {
       colors: {
         bg: "#1f1f1f",
         text: "#cccccc",
-        buttonColor: "#333333",
+        buttonColor: "#272727",
+        buttonHover: "#3f3f3f",
+        blackAlpha300: "#2a2a2a",
+        whiteAlpha800: "#b2b2b2",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
