@@ -1,16 +1,19 @@
-import { Button } from "@/components/ui/button";
-import { signOut } from "next-auth/react";
+import { Flex } from "@radix-ui/themes";
+import ConversationsWrapper from "./Conversation/ConversationsWrapper";
+import FeedWrapper from "./Feed/FeedWrapper";
+import { Session } from "next-auth";
 
-interface IChatProps {
+interface ChatProps {
+  session: Session;
 }
 
-const Chat: React.FC<IChatProps> = (props) => {
-  return(
-    <div className="">
-        Chat
-        <Button variant="outline" onClick={() => signOut()}>SignOut</Button>
-    </div>
-  )
+const Chat: React.FC<ChatProps> = ({session}) => {
+  return (
+    <Flex className='h-[100vh]'>
+      <ConversationsWrapper session={session} />
+      <FeedWrapper session={session} />
+    </Flex>
+  );
 };
 
 export default Chat;
