@@ -21,7 +21,7 @@ const resolvers = {
         /**
          * Check that username is not taken
          */
-        // to check if the existing user with that username
+        // to check if the existing user has that username
         const existingUser = await prisma.user.findUnique({
           where: {
             username,
@@ -47,7 +47,6 @@ const resolvers = {
         });
         return { success: true }; // we are not going to return the updated username because next-auth is going to do for us.
       } catch (error: any) {
-        console.log("createUsername error", error);
         return { error: error?.message };
       }
     },
