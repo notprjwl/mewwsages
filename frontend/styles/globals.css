@@ -2,7 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-  @layer base {
+@import '@radix-ui/themes/styles.css';
+@layer base {
     :root {
       --background: 0 0% 100%;
       --foreground: 240 10% 3.9%;
@@ -74,8 +75,81 @@
       @apply bg-[#1f1f1f] text-[#cccccc];
     }
   }
-
-/* *{
+/* 
+*{
     background-color: #1f1f1f;
     color: #cccccc;
 } */
+
+.dark, .dark-theme, :is(.dark, .dark-theme) :where(.radix-themes:not(.light, .light-theme)) {
+  --color-background: #1f1f1f;
+}
+.dark, .dark-theme {
+  --custom-1: #000;
+  --custom-2: #121212;
+  --custom-3: #1f1f1f;
+  --custom-4: #282828;
+  --custom-5: #303030;
+  --custom-6: #3a3a3a;
+  --custom-7: #484848;
+  --custom-8: #5f5f5f;
+  --custom-9: #242424;
+  --custom-10: #393939;
+  --custom-11: #b4b4b4;
+  --custom-12: #eee;
+
+  --custom-a1: #00000000;
+  --custom-a2: #ffffff12;
+  --custom-a3: #ffffff1f;
+  --custom-a4: #ffffff28;
+  --custom-a5: #ffffff30;
+  --custom-a6: #ffffff3a;
+  --custom-a7: #ffffff48;
+  --custom-a8: #ffffff5f;
+  --custom-a9: #ffffff24;
+  --custom-a10: #ffffff39;
+  --custom-a11: #ffffffb4;
+  --custom-a12: #ffffffee;
+
+  --custom-contrast: #fff;
+  --custom-surface: #24242480;
+  --custom-indicator: #242424;
+  --custom-track: #242424;
+}
+
+@supports (color: color(display-p3 1 1 1)) {
+  @media (color-gamut: p3) {
+    .dark, .dark-theme {
+      --custom-1: oklch(0% 0 0);
+      --custom-2: oklch(18.4% 0 0);
+      --custom-3: oklch(23.9% 0 0);
+      --custom-4: oklch(27.6% 0 0);
+      --custom-5: oklch(30.9% 0 0);
+      --custom-6: oklch(34.7% 0 0);
+      --custom-7: oklch(40.1% 0 0);
+      --custom-8: oklch(48.7% 0 0);
+      --custom-9: oklch(26% 0 0);
+      --custom-10: oklch(34.4% 0 0);
+      --custom-11: oklch(77% 0 0);
+      --custom-12: oklch(94.9% 0 0);
+
+      --custom-a1: color(display-p3 0 0 0 / 0);
+      --custom-a2: color(display-p3 1 1 1 / 0.071);
+      --custom-a3: color(display-p3 1 1 1 / 0.122);
+      --custom-a4: color(display-p3 1 1 1 / 0.157);
+      --custom-a5: color(display-p3 1 1 1 / 0.188);
+      --custom-a6: color(display-p3 1 1 1 / 0.227);
+      --custom-a7: color(display-p3 1 1 1 / 0.282);
+      --custom-a8: color(display-p3 1 1 1 / 0.373);
+      --custom-a9: color(display-p3 1 1 1 / 0.141);
+      --custom-a10: color(display-p3 1 1 1 / 0.224);
+      --custom-a11: color(display-p3 1 1 1 / 0.706);
+      --custom-a12: color(display-p3 1 1 1 / 0.933);
+
+      --custom-contrast: #fff;
+      --custom-surface: color(display-p3 0.141 0.141 0.141 / 0.5);
+      --custom-indicator: oklch(26% 0 0);
+      --custom-track: oklch(26% 0 0);
+    }
+  }
+}
