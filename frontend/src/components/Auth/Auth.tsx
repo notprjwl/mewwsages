@@ -1,12 +1,11 @@
 import { signIn } from "next-auth/react";
+import { Button, Center, Image, Input, Stack, Text } from "@chakra-ui/react";
 import { Session } from "next-auth";
 import { useState } from "react";
-import { Input } from "@/components/ui/input";
 import { useMutation } from "@apollo/client";
 import UserOperations from "@/src/graphql/operations/user";
 import { CreateUsernameData, CreateUsernameVariables } from "@/src/util/types";
 import toast from "react-hot-toast";
-import { Button } from "@radix-ui/themes";
 
 interface IAuthProps {
   session: Session | null;
@@ -47,27 +46,35 @@ const Auth: React.FC<IAuthProps> = ({ session, reloadSession }) => {
   };
 
   return (
-    <div className='h-[100vh] flex-col gap-2 flex mx-auto items-center justify-center'>
+    <Center height="100vh">
+    <Stack spacing={4} align="center">
       {session ? (
         <>
-          <div className='justify-center flex flex-col items-center text-center w-50% gap-5'>
-            <h1 className='text-2xl w-full'>Create a Username</h1>
-            <Input type='text' placeholder='Enter a username' value={username} onChange={(e) => setUsername(e.target.value)} className='w-60' />
-            <Button variant="soft" loading={loading} onClick={onSubmit} className=' text-white bg-[#033300] outline-1 outline outline-[#27272a] hover:bg-[#1b1b1b] w-full hover: cursor-pointer'>
-              Save
-            </Button>
-          </div>
+          <Text fontSize="2xl">Create a Username</Text>
+          <Input
+            placeholder="Enter a username"
+            value={username}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+              setUsername(event.target.value)
+            }
+          />
+          <Button onClick={onSubmit} width="100%" isLoading={loading}>
+            Save
+          </Button>
         </>
       ) : (
         <>
-          <div className='text-2xl'>Mewwsages 🐈‍⬛</div>
-          <Button loading={loading} className='bg-buttonColor gap-2 cursor-pointer hover:bg-buttonHover transition-all duration-200 ease-in-out' onClick={() => signIn()}>
-            <img src='/images/googlelogo.png' alt='googleImg' height={20} width={20} className='bg-transparent' />
+          <Text fontSize="3xl">Mewwsages 🐈‍⬛</Text>
+          <Button
+            onClick={() => signIn("google")}
+            leftIcon={<Image height="20px" src="/images/googlelogo.png" />}
+          >
             Continue with Google
           </Button>
         </>
       )}
-    </div>
+    </Stack>
+  </Center>
   );
 };
 
