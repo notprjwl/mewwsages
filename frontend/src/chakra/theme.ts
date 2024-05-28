@@ -1,4 +1,6 @@
 import { extendTheme, type ThemeConfig } from "@chakra-ui/react";
+import '@fontsource/arimo'
+
 
 const config: ThemeConfig = {
   initialColorMode: "dark",
@@ -12,6 +14,9 @@ export const theme = extendTheme(
       brand: {
         100: "#3D84F7",
       },
+    },
+    fonts: {
+      myFont: `'Arimo', sans-serif`,
     },
     styles: {
       global: () => ({
