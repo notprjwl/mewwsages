@@ -8,6 +8,7 @@ import { Toaster } from "react-hot-toast";
 import {ChakraProvider} from "@chakra-ui/react";
 import { theme } from "../chakra/theme";
 
+
 const inter = Inter({ subsets: ["latin"] });
 
 export default function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
