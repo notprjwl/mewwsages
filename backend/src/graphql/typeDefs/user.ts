@@ -6,6 +6,7 @@ const typeDefs = gql`
   type SearchedUser {
     id: String
     username: String
+    image: String
   }
 
   # to add functionality to the API you need to add fields to root types of the graphQl schema. which is query, mutation and subscription.
