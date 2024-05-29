@@ -10,7 +10,7 @@ interface ParticipantsProps {
 const Participants: React.FunctionComponent<ParticipantsProps> = ({ participants, removeParticipant }) => {
   console.log(participants);
   return (
-    <Flex gap={2} flexWrap='wrap'>
+    <Flex gap={2} flexWrap='wrap' mt={2}>
       {participants.map((participant) => (
         <Stack key={participant.id} direction='row' p={1} px={2} mt={2} align='center' bg='whiteAlpha.200' borderRadius={4}>
           <Text>{participant.username}</Text>
