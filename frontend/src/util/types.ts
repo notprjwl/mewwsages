@@ -23,6 +23,7 @@ export interface SearchUsersData {
 export interface SearchedUser {
   id: string;
   username: string;
+  image: string;
 }
 
 /**
