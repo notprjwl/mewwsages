@@ -5,9 +5,8 @@ import "../../styles/globals.css";
 import { ApolloProvider } from "@apollo/client";
 import { client } from "../graphql/apollo-client";
 import { Toaster } from "react-hot-toast";
-import {ChakraProvider} from "@chakra-ui/react";
+import { ChakraProvider } from "@chakra-ui/react";
 import { theme } from "../chakra/theme";
-
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,8 +15,8 @@ export default function App({ Component, pageProps: { session, ...pageProps } }:
     <ApolloProvider client={client}>
       <SessionProvider session={session}>
         <ChakraProvider theme={theme}>
-            <Component {...pageProps} />
-            <Toaster />
+          <Component {...pageProps} />
+          <Toaster position='top-right' reverseOrder={true} />
         </ChakraProvider>
       </SessionProvider>
     </ApolloProvider>
