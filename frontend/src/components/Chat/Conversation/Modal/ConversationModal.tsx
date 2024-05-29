@@ -8,7 +8,6 @@ import UserSearchList from "./UserSearchList";
 import Participants from "./Participants";
 import toast from "react-hot-toast";
 import { Session } from "next-auth";
-import { useSession } from "next-auth/react";
 
 interface ConversationModalProps {
   isOpen: boolean;
@@ -21,21 +20,32 @@ const ConversationModal: React.FunctionComponent<ConversationModalProps> = ({ se
   const [participants, setParticipants] = useState<Array<SearchedUser>>([]);
   const [searchUsers, { data, error, loading }] = useLazyQuery<SearchUsersData, SearchUsersInput>(UserOperations.Queries.searchUsers);
   const [createConversation, { loading: createConversationLoading }] = useMutation<CreateConversationData, CreateConversationInput>(ConversationOperations.Mutations.createConversation);
+  const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(false);
 
-  const { user: { id: userId} } = session;
+  const {
+    user: { id: userId },
+  } = session;
 
   //search the users
   const onSearch = (e: React.FormEvent) => {
     e.preventDefault();
     searchUsers({ variables: { username } });
+    setIsButtonDisabled(false);
   };
 
   console.log("HERE IS THE SEARCHED DATA", data);
 
   //add participant
   const addParticipant = (user: SearchedUser) => {
-    setParticipants((prev) => [...prev, user]);
-    setUsername("");
+    const isParticipantExists = participants.some((p) => p.id === user.id);
+    if (!isParticipantExists) {
+      setParticipants((prev) => [...prev, user]);
+      setUsername("");
+      setIsButtonDisabled(false);
+    } else {
+      setIsButtonDisabled(true);
+      toast.error("CONVERSATION WITH THIS PARTICIPANT ALREADY PRESENT");
+    }
   };
 
   //remove participant
@@ -45,7 +55,7 @@ const ConversationModal: React.FunctionComponent<ConversationModalProps> = ({ se
 
   //create conversation
   const onCreateConversation = async () => {
-    const participantIds = [userId, ...participants.map((p) => p.id)]
+    const participantIds = [userId, ...participants.map((p) => p.id)];
     try {
       // createConversation mutation
       const { data } = await createConversation({
@@ -53,7 +63,7 @@ const ConversationModal: React.FunctionComponent<ConversationModalProps> = ({ se
           participantIds,
         },
       });
-      console.log('HERE IS OUR DATA', data)
+      console.log("HERE IS OUR DATA", data);
     } catch (error: any) {
       console.log("onCreateConversation Error", error);
       toast.error(error?.message);
@@ -77,11 +87,11 @@ const ConversationModal: React.FunctionComponent<ConversationModalProps> = ({ se
               </Button>
             </Stack>
           </form>
-          {data?.searchUsers && <UserSearchList users={data.searchUsers} addParticipant={addParticipant} />}
+          {data?.searchUsers && <UserSearchList users={data.searchUsers} addParticipant={addParticipant}/>}
           {participants.length !== 0 && (
             <>
-              <Participants participants={participants} removeParticipant={removeParticipant} />
-              <Button bg='brand.100' width='100%' mt={5} _hover={{ bg: "brand.100" }} isLoading={createConversationLoading} onClick={onCreateConversation}>
+              <Participants participants={participants} removeParticipant={removeParticipant}  />
+              <Button bg='brand.100' width='100%' mt={4} _hover={{ bg: "brand.100" }} isLoading={createConversationLoading} onClick={onCreateConversation}>
                 Create Conversation
               </Button>
             </>
