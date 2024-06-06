@@ -9,7 +9,7 @@ const resolvers = {
       const { session, prisma } = context;
       const { participantIds } = args;
 
-      console.log("PARTICIPANT IDS", participantIds)
+      console.log("PARTICIPANT IDS", participantIds);
 
       if (!session?.user) {
         throw new ApolloError("NOT AUTHORIZED");
