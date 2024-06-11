@@ -3,6 +3,17 @@ import { gql } from "apollo-server-core";
 // this is not a typescript, it is a schema definition language
 const typeDefs = gql`
   # this user type does not expose any functionality to the client. It simply defines the structure of the user model in the application.
+
+  type User {
+    id: String
+    name: String
+    username: String
+    email:String
+    emailVerified: Boolean
+    image: String
+
+  }
+
   type SearchedUser {
     id: String
     username: String
