@@ -1,7 +1,6 @@
 
-// import { ConversationPopulated } from "../../../backend/src/util/types"
+import { ConversationPopulated } from "../../../backend/src/util/types"
 
-import { Prisma } from "@prisma/client";
 
 /**
  * USERS
@@ -49,6 +48,4 @@ export interface CreateConversationInput {
   participantIds: Array<string>;
 }
 
-export type ConversationPopulated = Prisma.ConversationGetPayload<{ include: typeof conversationPopulated }>;
 
-export interface 
