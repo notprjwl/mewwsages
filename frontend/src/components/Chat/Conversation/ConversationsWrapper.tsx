@@ -20,7 +20,7 @@ const ConversationsWrapper: React.FC<ConversationsWrapperProps> = ({ session }) 
   return (
     <Box width={{ base: "100%", md: "400px" }} bg="whiteAlpha.50" py={5} px={3} >
       {/* skeleton loader */}
-      <ConversationList session={session} />
+      <ConversationList session={session} conversations={conversationsData?.conversations || []} />
     </Box>
   );
 };
