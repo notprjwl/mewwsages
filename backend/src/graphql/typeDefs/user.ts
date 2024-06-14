@@ -11,7 +11,6 @@ const typeDefs = gql`
     email:String
     emailVerified: Boolean
     image: String
-
   }
 
   type SearchedUser {
