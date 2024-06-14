@@ -1,10 +1,13 @@
 import { Prisma } from "@prisma/client";
 import { ConversationPopulated, GraphQlContext } from "../../util/types";
 import { ApolloError } from "apollo-server-core";
+import { withFilter } from "graphql-subscriptions";
+import { GraphQLError } from "graphql";
+import { userIsConversationParticipant } from "../../util/functions";
 
 const resolvers = {
   Query: {
-    conversations: async (_: any, __: any, context: GraphQlContext):Promise<Array<ConversationPopulated>> => {
+    conversations: async (_: any, __: any, context: GraphQlContext): Promise<Array<ConversationPopulated>> => {
       const { session, prisma } = context;
 
       if (!session?.user) {
@@ -41,10 +44,10 @@ const resolvers = {
   },
   Mutation: {
     createConversation: async (_: any, args: { participantIds: Array<string> }, context: GraphQlContext): Promise<{ conversationId: string }> => {
-      const { session, prisma } = context;
+      const { session, prisma, pubsub } = context;
       const { participantIds } = args;
 
-      console.log("PARTICIPANT IDS", participantIds);
+      // console.log("PARTICIPANT IDS", participantIds);
 
       if (!session?.user) {
         throw new ApolloError("NOT AUTHORIZED");
@@ -69,7 +72,13 @@ const resolvers = {
           include: conversationPopulated,
         });
 
-        // ADDING A CONVERSATION CREATE EVENT USING PUBSUB LATER
+        // ADDING A CONVERSATION CREATE EVENT USING PUBSUB
+        /**
+         * this conversation event is going to be published with a payload conversation
+         */
+        pubsub.publish("CONVERSATION_CREATED", {
+          conversationCreated: conversation,
+        });
 
         return {
           conversationId: conversation.id,
@@ -80,7 +89,62 @@ const resolvers = {
       }
     },
   },
+
+  Subscription: {
+    conversationCreated: {
+      // now since the conversationCreated subscription is listening to the event, then this function will be called every time the conversation is created
+
+      // basic subscription without using withFilter
+      // subscribe: (_: any, __: any, context: GraphQlContext) => {
+      //   const { pubsub } = context;
+      //   return pubsub.asyncIterator(["CONVERSATION_CREATED"]); // we are listening to the "CONVERSATION_CREATED" event
+      // },
+
+      /**
+       * If the sign in user is the part of the conversation we are going to return tre and then we are submitting the event. Else will will not fire the event. This is all done using withFilter function
+       */
+      // subscribe: withFilter(
+      //   (_: any, __: any, context: GraphQlContext) => {
+      //     const { pubsub } = context;
+
+      //     return pubsub.asyncIterator(["CONVERSATION_CREATED"]); // we are listening to the "CONVERSATION_CREATED" event
+      //   },
+      //   (payload: ConversationCreatedSubscriptionPayload, _, context: GraphQlContext )=> {
+      //     const { session } = context;
+      //     const { conversationCreated: { participants} } = payload;
+      //     const userIsParticipant = participants.find((p: { userId: string }) => p.userId === session?.user?.id);
+      //     return userIsParticipant;
+      //   }
+      // ),
+
+      subscribe: withFilter(
+        (_: any, __: any, context: GraphQlContext) => {
+          const { pubsub } = context;
+
+          return pubsub.asyncIterator(["CONVERSATION_CREATED"]);
+        },
+        (payload: ConversationCreatedSubscriptionPayload, _, context: GraphQlContext) => {
+          const { session } = context;
+
+          if (!session?.user) {
+            throw new GraphQLError("Not authorized");
+          }
+
+          const {
+            conversationCreated: { participants },
+          } = payload;
+
+          const userIsParticipant = userIsConversationParticipant(participants, session.user.id);
+          return userIsParticipant;
+        }
+      ),
+    },
+  },
 };
+
+export interface ConversationCreatedSubscriptionPayload {
+  conversationCreated: ConversationPopulated;
+}
 
 export const participantPopulated = Prisma.validator<Prisma.ConversationParticipantInclude>()({
   user: {
