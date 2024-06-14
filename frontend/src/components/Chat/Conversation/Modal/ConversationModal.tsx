@@ -43,7 +43,6 @@ const ConversationModal: React.FunctionComponent<ConversationModalProps> = ({ se
     }
   }, [username]);
 
-  console.log("HERE IS THE SEARCHED DATA", data);
 
   //add participant
   const addParticipant = (user: SearchedUser) => {
@@ -68,13 +67,13 @@ const ConversationModal: React.FunctionComponent<ConversationModalProps> = ({ se
     const participantIds = [userId, ...participants.map((p) => p.id)];
     try {
       // createConversation mutation
-      const { data } = await createConversation({
+      const { data, errors } = await createConversation({
         variables: {
           participantIds,
         },
       });
 
-      if (!data?.createConversation) {
+      if (!data?.createConversation || errors) {
         throw new Error("Failed to create conversation :(");
       }
 
@@ -91,7 +90,6 @@ const ConversationModal: React.FunctionComponent<ConversationModalProps> = ({ se
       setParticipants([]);
       onClose();
 
-      console.log("HERE IS OUR DATA", data);
     } catch (error: any) {
       console.log("onCreateConversation Error", error);
       toast.error(error?.message);
