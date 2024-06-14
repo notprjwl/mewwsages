@@ -8,7 +8,6 @@ interface ParticipantsProps {
 }
 
 const Participants: React.FunctionComponent<ParticipantsProps> = ({ participants, removeParticipant }) => {
-  console.log(participants);
   return (
     <Flex gap={2} flexWrap='wrap' mt={2}>
       {participants.map((participant) => (
