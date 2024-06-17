@@ -1,17 +1,16 @@
 import { Prisma } from "@prisma/client";
-import { ConversationPopulated, GraphQlContext } from "../../util/types";
-import { ApolloError } from "apollo-server-core";
+import { ConversationPopulated, GraphQLContext } from "../../util/types";
 import { withFilter } from "graphql-subscriptions";
 import { GraphQLError } from "graphql";
 import { userIsConversationParticipant } from "../../util/functions";
 
 const resolvers = {
   Query: {
-    conversations: async (_: any, __: any, context: GraphQlContext): Promise<Array<ConversationPopulated>> => {
+    conversations: async (_: any, __: any, context: GraphQLContext): Promise<Array<ConversationPopulated>> => {
       const { session, prisma } = context;
 
       if (!session?.user) {
-        throw new ApolloError("NOT AUTHORIZED");
+        throw new GraphQLError("NOT AUTHORIZED");
       }
       const {
         user: { id: userId },
@@ -38,19 +37,19 @@ const resolvers = {
         // return conversations.filter((conversation) => !!conversation.participants.find((p) => p.userId === userId));
       } catch (error: any) {
         console.log("CONVERSATIONS ERROR", error);
-        throw new ApolloError(error?.message);
+        throw new GraphQLError(error?.message);
       }
     },
   },
   Mutation: {
-    createConversation: async (_: any, args: { participantIds: Array<string> }, context: GraphQlContext): Promise<{ conversationId: string }> => {
+    createConversation: async (_: any, args: { participantIds: Array<string> }, context: GraphQLContext): Promise<{ conversationId: string }> => {
       const { session, prisma, pubsub } = context;
       const { participantIds } = args;
 
       // console.log("PARTICIPANT IDS", participantIds);
 
       if (!session?.user) {
-        throw new ApolloError("NOT AUTHORIZED");
+        throw new GraphQLError("NOT AUTHORIZED");
       }
 
       const {
@@ -85,7 +84,7 @@ const resolvers = {
         };
       } catch (error) {
         console.log("CREATE CONVERSATION ERROR", error);
-        throw new ApolloError("ERROR CREATING CONVERSATION");
+        throw new GraphQLError("ERROR CREATING CONVERSATION");
       }
     },
   },
@@ -95,7 +94,7 @@ const resolvers = {
       // now since the conversationCreated subscription is listening to the event, then this function will be called every time the conversation is created
 
       // basic subscription without using withFilter
-      // subscribe: (_: any, __: any, context: GraphQlContext) => {
+      // subscribe: (_: any, __: any, context: GraphQLContext) => {
       //   const { pubsub } = context;
       //   return pubsub.asyncIterator(["CONVERSATION_CREATED"]); // we are listening to the "CONVERSATION_CREATED" event
       // },
@@ -104,12 +103,12 @@ const resolvers = {
        * If the sign in user is the part of the conversation we are going to return tre and then we are submitting the event. Else will will not fire the event. This is all done using withFilter function
        */
       // subscribe: withFilter(
-      //   (_: any, __: any, context: GraphQlContext) => {
+      //   (_: any, __: any, context: GraphQLContext) => {
       //     const { pubsub } = context;
 
       //     return pubsub.asyncIterator(["CONVERSATION_CREATED"]); // we are listening to the "CONVERSATION_CREATED" event
       //   },
-      //   (payload: ConversationCreatedSubscriptionPayload, _, context: GraphQlContext )=> {
+      //   (payload: ConversationCreatedSubscriptionPayload, _, context: GraphQLContext )=> {
       //     const { session } = context;
       //     const { conversationCreated: { participants} } = payload;
       //     const userIsParticipant = participants.find((p: { userId: string }) => p.userId === session?.user?.id);
@@ -118,12 +117,12 @@ const resolvers = {
       // ),
 
       subscribe: withFilter(
-        (_: any, __: any, context: GraphQlContext) => {
+        (_: any, __: any, context: GraphQLContext) => {
           const { pubsub } = context;
 
           return pubsub.asyncIterator(["CONVERSATION_CREATED"]);
         },
-        (payload: ConversationCreatedSubscriptionPayload, _, context: GraphQlContext) => {
+        (payload: ConversationCreatedSubscriptionPayload, _, context: GraphQLContext) => {
           const { session } = context;
 
           if (!session?.user) {
@@ -151,6 +150,7 @@ export const participantPopulated = Prisma.validator<Prisma.ConversationParticip
     select: {
       id: true,
       username: true,
+      image: true,
     },
   },
 });

@@ -12,13 +12,14 @@
   "dependencies": {
     "@apollo/server": "^4.10.4",
     "@graphql-tools/schema": "^10.0.4",
-    "@prisma/client": "^5.14.0",
-    "apollo-server-core": "^3.13.0",
-    "apollo-server-express": "^3.13.0",
+    "@prisma/client": "^5.15.0",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "graphql": "^16.8.1",
     "graphql-subscriptions": "^2.0.0",
+    "graphql-tag": "^2.12.6",
     "graphql-ws": "^5.16.0",
     "lodash.merge": "^4.6.2",
     "next-auth": "^4.20.1",
@@ -27,6 +28,7 @@
     "ws": "^8.17.0"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.17",
     "@types/lodash.merge": "^4.6.9",
     "@types/punycode": "^2.1.4",
     "@types/ws": "^8.5.10",

@@ -14,7 +14,7 @@ export interface SubscriptionContext extends Context {
   };
 }
 
-export interface GraphQlContext {
+export interface GraphQLContext {
   session: Session | null;
   prisma: PrismaClient;
   pubsub: PubSub;

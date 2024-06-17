@@ -1,4 +1,5 @@
-import { gql } from "apollo-server-core";
+import { gql } from "graphql-tag";
+
 
 // this is not a typescript, it is a schema definition language
 const typeDefs = gql`
