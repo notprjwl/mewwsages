@@ -4,6 +4,11 @@ import { withFilter } from "graphql-subscriptions";
 import { GraphQLError } from "graphql";
 import { userIsConversationParticipant } from "../../util/functions";
 
+
+/**
+ * a query is a request for data, a mutation is a request to change data, and a resolver is the function that gets the data for a specific field in your schema.
+*/
+
 const resolvers = {
   Query: {
     conversations: async (_: any, __: any, context: GraphQLContext): Promise<Array<ConversationPopulated>> => {
@@ -145,6 +150,7 @@ export interface ConversationCreatedSubscriptionPayload {
   conversationCreated: ConversationPopulated;
 }
 
+// we created this to say what we want to return
 export const participantPopulated = Prisma.validator<Prisma.ConversationParticipantInclude>()({
   user: {
     select: {
