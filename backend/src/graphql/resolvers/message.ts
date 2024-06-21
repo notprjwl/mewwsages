@@ -53,6 +53,7 @@ const resolvers = {
         });
         
         return messages;
+        // return [{ body: "this is a test message"} as MessagePopulated];
       } catch (error: any) {
         console.log("MESSAGES ERROR", error);
         throw new GraphQLError(error?.message);
