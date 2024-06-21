@@ -52,10 +52,9 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
     }
   };
 
-  console.log("CONVERSATION", conversation);
 
   return (
-    <Stack direction='row' align='center' justify='space-between' p={3} cursor='pointer' borderRadius={4} bg={isSelected ? "whiteAlpha.200" : "none"} _hover={{ bg: "whiteAlpha.200" }} onClick={handleClick} onContextMenu={handleClick} position='relative'>
+    <Stack direction='row' align='center' justify='space-between' mb={2} p={2} cursor='pointer' borderRadius={4} bg={isSelected ? "whiteAlpha.200" : "none"} _hover={{ bg: "whiteAlpha.200" }} onClick={handleClick} onContextMenu={handleClick} position='relative'>
       <Menu isOpen={menuOpen} onClose={() => setMenuOpen(false)}>
         <MenuList bg='#2d2d2d'>
           <MenuItem
