@@ -7,7 +7,7 @@ import { Session } from "next-auth";
 export default function Home() {
   const { data: session } = useSession();
 
-  console.log("here is the session", session);
+  // console.log("here is the session", session);
 
   const reloadSession = () => {
     const event = new Event("visibilitychange");
