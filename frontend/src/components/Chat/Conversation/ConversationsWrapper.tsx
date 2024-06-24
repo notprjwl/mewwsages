@@ -7,6 +7,7 @@ import { ConversationsData } from "@/src/util/types";
 import { ConversationPopulated } from "../../../../../backend/src/util/types";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
+import SkeletonLoader from "../../common/SkeletonLoader";
 
 interface ConversationsWrapperProps {
   session: Session;
@@ -17,19 +18,18 @@ const ConversationsWrapper: React.FC<ConversationsWrapperProps> = ({ session }) 
 
   const router = useRouter();
 
-  const { conversationId } = router.query
+  const { conversationId } = router.query;
 
   const onViewConversation = async (conversationId: string) => {
     /**
      * 1. Push the ConversationID to the router query params
      */
-    router.push({query: {conversationId}})
-    
+    router.push({ query: { conversationId } });
 
     /**
      * 2. Mark the Conversation as read
      */
-  }
+  };
 
   // subscribe to new conversations. refer docs: https://www.apollographql.com/docs/react/data/subscriptions
   const subscribeToNewConversations = () => {
@@ -56,11 +56,9 @@ const ConversationsWrapper: React.FC<ConversationsWrapperProps> = ({ session }) 
     subscribeToNewConversations();
   }, []);
 
-
   return (
-    <Box width={{ base: "100%", md: "400px" }} bg='whiteAlpha.50' py={5} px={3} display={{ base: conversationId ? "none" : "flex", md: "flex" }}>
-      {/* skeleton loader */}
-      <ConversationList session={session} conversations={conversationsData?.conversations || []} onViewConversation={onViewConversation}/>
+    <Box width={{ base: "100%", md: "400px" }} bg='whiteAlpha.50' py={5} px={3} flexDirection="column" gap={3} display={{ base: conversationId ? "none" : "flex", md: "flex" }}>
+      {conversationsLoading ? <SkeletonLoader count={7} height='65px' /> : <ConversationList session={session} conversations={conversationsData?.conversations || []} onViewConversation={onViewConversation} />}
     </Box>
   );
 };
