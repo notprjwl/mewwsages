@@ -5,6 +5,7 @@ import MessageOperations from "../../../../graphql/operations/message";
 import { Flex, Stack } from "@chakra-ui/react";
 import toast from "react-hot-toast";
 import MessageItem from "./MessageItem";
+import SkeletonLoader from "@/src/components/common/SkeletonLoader";
 
 interface IMessagesProps {
   userId: string;
@@ -22,13 +23,17 @@ const Messages: React.FunctionComponent<IMessagesProps> = ({ userId, conversatio
     onCompleted: () => {},
   });
 
+  if(error) {
+    return null;
+  }
+
   console.log("HERE IS THE MESSAGES DATA", data);
 
   return (
     <Flex direction='column' justify='flex-end' overflow='hidden'>
       {loading && (
-        <Stack>
-          <span>LOADING MESSAGE</span>
+        <Stack spacing={3} px={5}>
+          <SkeletonLoader count={4} height="60px" />
         </Stack>
       )}
       {data?.messages && (
