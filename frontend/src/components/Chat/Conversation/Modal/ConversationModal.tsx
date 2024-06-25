@@ -73,6 +73,8 @@ const ConversationModal: React.FunctionComponent<ConversationModalProps> = ({ se
         },
       });
 
+      console.log('HERE IS THE CONVERSATION DATA', data)
+
       if (!data?.createConversation || errors) {
         throw new Error("Failed to create conversation :(");
       }
@@ -81,14 +83,14 @@ const ConversationModal: React.FunctionComponent<ConversationModalProps> = ({ se
         createConversation: { conversationId },
       } = data;
 
-      router.push({ query: { conversationId } });
-
+      
       /**
        * Clearing the state and close our modal on successful creation
-       */
-      setUsername("");
-      setParticipants([]);
-      onClose();
+      */
+     setParticipants([]);
+     setUsername("");
+     onClose();
+     router.push({ query: { conversationId } });
 
     } catch (error: any) {
       console.log("onCreateConversation Error", error);
