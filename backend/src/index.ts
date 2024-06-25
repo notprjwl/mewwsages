@@ -18,9 +18,18 @@ import { GraphQLContext, Session, SubscriptionContext } from "./util/types";
 
 async function main() {
   dotenv.config();
+
+  const schema = makeExecutableSchema({
+    typeDefs,
+    resolvers,
+  });
+
   const app = express();
   const httpServer = http.createServer(app);
-
+  
+  const prisma = new PrismaClient();
+  const pubsub = new PubSub();
+  
   // Creating the WebSocket server
   const wsServer = new WebSocketServer({
     // This is the `httpServer` we created in a previous step.
@@ -33,16 +42,10 @@ async function main() {
   // Hand in the schema we just created and have the
   // WebSocketServer start listening.
 
-  const schema = makeExecutableSchema({
-    typeDefs,
-    resolvers,
-  });
 
   /**
    * Context parameters
    */
-  const prisma = new PrismaClient();
-  const pubsub = new PubSub();
 
   const serverCleanup = useServer(
     {
@@ -57,8 +60,6 @@ async function main() {
     },
     wsServer
   );
-
-
 
   const server = new ApolloServer({
     schema,
