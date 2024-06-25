@@ -21,8 +21,8 @@ interface ConversationItemProps {
   conversation: ConversationPopulated;
   onClick: () => void;
   isSelected: boolean;
-  hasSeenLatestMessage: boolean | undefined;
-  onDeleteConversation: (conversationId: string) => void;
+  // hasSeenLatestMessage: boolean | undefined;
+  // onDeleteConversation: (conversationId: string) => void;
   //   onEditConversation?: () => void;
   //   hasSeenLatestMessage?: boolean;
   //   selectedConversationId?: string;
@@ -35,8 +35,8 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
   conversation,
   onClick,
   isSelected,
-  hasSeenLatestMessage,
-  onDeleteConversation,
+  // hasSeenLatestMessage,
+  // onDeleteConversation,
   //   selectedConversationId,
   //   onEditConversation,
   //   onLeaveConversation,
@@ -71,7 +71,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
             icon={<MdDeleteOutline fontSize={20} />}
             onClick={(event) => {
               event.stopPropagation();
-              onDeleteConversation(conversation.id);
+              // onDeleteConversation(conversation.id);
             }}
             bg='#2d2d2d'
             _hover={{ bg: "whiteAlpha.300" }}>
@@ -101,7 +101,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
         </MenuList>
       </Menu>
       <Flex position='absolute' left='-6px'>
-        {hasSeenLatestMessage === false && <GoDotFill fontSize={18} color='#6B46C1' />}
+        {/* {hasSeenLatestMessage === false && <GoDotFill fontSize={18} color='#6B46C1' />} */}
       </Flex>
       <Avatar src={`${conversation.participants.find((p) => p.user.id !== userId)?.user.image}`} />
       <Flex justify='space-between' width='80%' height='100%'>
