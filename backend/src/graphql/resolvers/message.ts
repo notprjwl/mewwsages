@@ -28,7 +28,6 @@ const resolvers = {
         include: conversationPopulated,
       });
 
-
       // if the conversation is not present
       if (!conversation) {
         throw new GraphQLError("CONVERSATION NOT FOUND");
@@ -51,7 +50,7 @@ const resolvers = {
             createdAt: "desc",
           },
         });
-        
+
         return messages;
         // return [{ body: "this is a test message"} as MessagePopulated];
       } catch (error: any) {
@@ -92,6 +91,20 @@ const resolvers = {
         });
 
         /**
+         *  Find ConversationParticipant Entity
+         */
+        const participant = await prisma.conversationParticipant.findFirst({
+          where: {
+            userId,
+            conversationId,
+          },
+        });
+
+        if (!participant) {
+          throw new GraphQLError("PARTICIPANT NOT FOUND");
+        }
+
+        /**
          * UPDATE CONVERSATION ENTITY
          */
         const conversation = await prisma.conversation.update({
@@ -99,11 +112,11 @@ const resolvers = {
             id: conversationId,
           },
           data: {
-            latestMessageId: newMessage.id,
+            latestMessageId: newMessage.id,     
             participants: {
               update: {
                 where: {
-                  id: senderId,
+                  id: participant.id,
                 },
                 data: {
                   hasSeenLatestMessage: true,
@@ -112,7 +125,7 @@ const resolvers = {
               updateMany: {
                 where: {
                   NOT: {
-                    id: senderId,
+                    userId,
                   },
                 },
                 data: {
@@ -121,6 +134,7 @@ const resolvers = {
               },
             },
           },
+          include: conversationPopulated, 
         });
 
         // publishing event
