@@ -12,7 +12,7 @@
   "dependencies": {
     "@apollo/server": "^4.10.4",
     "@graphql-tools/schema": "^10.0.4",
-    "@prisma/client": "^5.15.0",
+    "@prisma/client": "^5.15.1",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
@@ -33,6 +33,6 @@
     "@types/punycode": "^2.1.4",
     "@types/ws": "^8.5.10",
     "nodemon": "^3.1.0",
-    "prisma": "^5.14.0"
+    "prisma": "^5.15.1"
   }
 }
