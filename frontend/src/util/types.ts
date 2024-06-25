@@ -49,6 +49,15 @@ export interface CreateConversationInput {
 }
 
 
+export interface ConversationCreatedSubscriptionData {
+  subscriptionData: {
+    data: {
+      conversationCreated: ConversationPopulated;
+    };
+  };
+}
+
+
 /**
  * MESSAGES
  */
