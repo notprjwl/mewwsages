@@ -4,10 +4,9 @@ import { withFilter } from "graphql-subscriptions";
 import { GraphQLError } from "graphql";
 import { userIsConversationParticipant } from "../../util/functions";
 
-
 /**
  * a query is a request for data, a mutation is a request to change data, and a resolver is the function that gets the data for a specific field in your schema.
-*/
+ */
 
 const resolvers = {
   Query: {
@@ -100,48 +99,33 @@ const resolvers = {
 
       // basic subscription without using withFilter
       // subscribe: (_: any, __: any, context: GraphQLContext) => {
-      //   const { pubsub } = context;
+      //   const { pubsub, session } = context;
+      //   console.log("SUBSCRIPTION FIRED")
+      //   console.log("Session in subscription", session)
       //   return pubsub.asyncIterator(["CONVERSATION_CREATED"]); // we are listening to the "CONVERSATION_CREATED" event
       // },
 
       /**
        * If the sign in user is the part of the conversation we are going to return tre and then we are submitting the event. Else will will not fire the event. This is all done using withFilter function
        */
-      // subscribe: withFilter(
-      //   (_: any, __: any, context: GraphQLContext) => {
-      //     const { pubsub } = context;
-
-      //     return pubsub.asyncIterator(["CONVERSATION_CREATED"]); // we are listening to the "CONVERSATION_CREATED" event
-      //   },
-      //   (payload: ConversationCreatedSubscriptionPayload, _, context: GraphQLContext )=> {
-      //     const { session } = context;
-      //     const { conversationCreated: { participants} } = payload;
-      //     const userIsParticipant = participants.find((p: { userId: string }) => p.userId === session?.user?.id);
-      //     return userIsParticipant;
-      //   }
-      // ),
 
       subscribe: withFilter(
         (_: any, __: any, context: GraphQLContext) => {
           const { pubsub } = context;
-
           return pubsub.asyncIterator(["CONVERSATION_CREATED"]);
         },
-        (payload: ConversationCreatedSubscriptionPayload, _, context: GraphQLContext) => {
+        (payload: ConversationCreatedSubscriptionPayload, variables: any, context: GraphQLContext) => {
           const { session } = context;
-
-          if (!session?.user) {
-            throw new GraphQLError("Not authorized");
-          }
-
-          const {
-            conversationCreated: { participants },
-          } = payload;
-
-          const userIsParticipant = userIsConversationParticipant(participants, session.user.id);
-          return userIsParticipant;
+          const { conversationCreated: {participants} } = payload;
+  
+          // Example condition: Check if the logged-in user is a participant in the conversation
+          const userIsParticipant = !!participants.find(p => p.userId === session?.user?.id);
+          
+          console.log("User is participant:", userIsParticipant);
+          
+          return userIsParticipant; // Adjust based on your filter criteria
         }
-      ),
+      )  
     },
   },
 };
