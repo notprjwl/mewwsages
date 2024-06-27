@@ -11,7 +11,7 @@ import { messagePopulated } from "../graphql/resolvers/message";
 
 export interface SubscriptionContext extends Context {
   connectionParams: {
-    session?: Session;
+    session: Session | null;
   };
 }
 
@@ -29,6 +29,7 @@ export interface Session {
 /**
  * USERS CONFIGURATION
  */
+
 export interface User {
   id: string;
   username: string;
