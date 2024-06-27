@@ -29,7 +29,7 @@ async function main() {
   
   const prisma = new PrismaClient();
   const pubsub = new PubSub();
-  
+
   // Creating the WebSocket server
   const wsServer = new WebSocketServer({
     // This is the `httpServer` we created in a previous step.
@@ -61,8 +61,11 @@ async function main() {
     wsServer
   );
 
+
+
   const server = new ApolloServer({
     schema,
+    csrfPrevention: true,
     plugins: [
       // Proper shutdown for the HTTP server.
       ApolloServerPluginDrainHttpServer({ httpServer }),
