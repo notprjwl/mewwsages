@@ -100,13 +100,13 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
           )} */}
         </MenuList>
       </Menu>
-      <Flex position='absolute' left='-6px'>
+      <Flex position='absolute' left='-6px' >
         {/* {hasSeenLatestMessage === false && <GoDotFill fontSize={18} color='#6B46C1' />} */}
       </Flex>
-      <Avatar src={`${conversation.participants.find((p) => p.user.id !== userId)?.user.image}`} />
-      <Flex justify='space-between' width='80%' height='100%'>
+      <Avatar src={`${conversation.participants.find((p) => p.user.id !== userId)?.user.image}`} size={["md"]} />
+      <Flex justify='space-between' width='100%' height='100%'>
         <Flex direction='column' width='70%' height='100%'>
-          <Text fontWeight={600} whiteSpace='nowrap' overflow='hidden' textOverflow='ellipsis'>
+          <Text fontWeight={600} whiteSpace='nowrap' fontSize={["sm", "md"]} overflow='hidden' textOverflow='ellipsis'>
             {formatUsernames(conversation.participants, userId)}
           </Text>
           {conversation.latestMessage && (
@@ -117,13 +117,13 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
             </Box>
           )}
         </Flex>
-        <Text color='whiteAlpha.700' textAlign='right' position='absolute' right={4}>
+        <Text color='whiteAlpha.700' fontSize="sm" textAlign='right' position='absolute' right={4}>
           {formatRelative(new Date(conversation.updatedAt), new Date(), {
             locale: {
               ...enUS,
               formatRelative: (token) => formatRelativeLocale[token as keyof typeof formatRelativeLocale],
             },
-          })}
+          })} 
         </Text>
       </Flex>
     </Stack>
