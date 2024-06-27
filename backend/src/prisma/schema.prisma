@@ -94,6 +94,7 @@ model Message {
   senderId       String        @db.ObjectId
   sender         User          @relation(fields: [senderId], references: [id])
   body           String
+  image          String?
   isLatestIn     Conversation? @relation(name: "latestConversationMessage")
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
