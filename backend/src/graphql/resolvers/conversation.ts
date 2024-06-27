@@ -96,12 +96,11 @@ const resolvers = {
   Subscription: {
     conversationCreated: {
       // now since the conversationCreated subscription is listening to the event, then this function will be called every time the conversation is created
-
-      // basic subscription without using withFilter
+      //  basic subscription without using withFilter
       // subscribe: (_: any, __: any, context: GraphQLContext) => {
       //   const { pubsub, session } = context;
-      //   console.log("SUBSCRIPTION FIRED")
-      //   console.log("Session in subscription", session)
+      //   console.log("SUBSCRIPTION FIRED");
+      //   console.log("Session in subscription", session);
       //   return pubsub.asyncIterator(["CONVERSATION_CREATED"]); // we are listening to the "CONVERSATION_CREATED" event
       // },
 
@@ -116,19 +115,26 @@ const resolvers = {
         },
         (payload: ConversationCreatedSubscriptionPayload, variables: any, context: GraphQLContext) => {
           const { session } = context;
-          const { conversationCreated: {participants} } = payload;
-  
-          // Example condition: Check if the logged-in user is a participant in the conversation
-          const userIsParticipant = !!participants.find(p => p.userId === session?.user?.id);
-          
+          const {
+            conversationCreated: { participants },
+          } = payload;
+
+          if (!session?.user) {
+            console.log("Session is not available");
+            return false;
+          }
+
+          const userIsParticipant = !!participants.find((p) => p.userId === session.user.id);
+
           console.log("User is participant:", userIsParticipant);
-          
-          return userIsParticipant; // Adjust based on your filter criteria
+
+          return userIsParticipant;
         }
-      )  
+      ),
     },
   },
 };
+// }
 
 export interface ConversationCreatedSubscriptionPayload {
   conversationCreated: ConversationPopulated;
