@@ -112,7 +112,7 @@ const resolvers = {
             id: conversationId,
           },
           data: {
-            latestMessageId: newMessage.id,     
+            latestMessageId: newMessage.id,
             participants: {
               update: {
                 where: {
@@ -134,7 +134,7 @@ const resolvers = {
               },
             },
           },
-          include: conversationPopulated, 
+          include: conversationPopulated,
         });
 
         // publishing event
@@ -168,6 +168,7 @@ export const messagePopulated = Prisma.validator<Prisma.MessageInclude>()({
     select: {
       id: true,
       username: true,
+      image: true,
     },
   },
 });
