@@ -63,9 +63,19 @@ export interface ConversationCreatedSubscriptionData {
  */
 
 export interface MessagesData {
+  messageSent: any;
   messages:  Array<MessagePopulated>;
 }
 
 export interface MessagesVariables {
   conversationId: string;
 }
+
+export interface MessageSubscriptionData {
+  subscriptionData: {
+    data: {
+      messageSent: MessagePopulated;
+    };
+  };
+}
+
