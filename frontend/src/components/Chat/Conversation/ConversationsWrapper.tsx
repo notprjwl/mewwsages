@@ -52,19 +52,18 @@ const ConversationsWrapper: React.FC<ConversationsWrapperProps> = ({ session }) 
       },
     });
   };
+
+  
   
   
   /**
    * EXECUTE SUBSCRIPTION ON MOUNT
   */
  useEffect(() => {
+  console.log("subscribe on mount")
    subscribeToNewConversations();
  }, []);
  
-    // Detailed error logging
-    if (conversationsError) {
-      console.error("Error fetching conversations:", conversationsError);
-    }
 
 
   return (
