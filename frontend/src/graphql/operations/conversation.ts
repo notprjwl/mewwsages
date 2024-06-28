@@ -35,12 +35,26 @@ export default {
         }
       }
     `,
+    markConversationAsRead: gql`
+      mutation markConversationAsRead($userId: String!, $conversationId: String!) {
+        markConversationAsRead(userId: $userId, conversationId: $conversationId) # not specifying any return type because it is going to return a boolean
+      }
+    `,
   },
   Subscriptions: {
     conversationCreated: gql`
       subscription ConversationCreated {
         conversationCreated {
           ${ConversationFields}
+        }
+      }
+    `,
+    conversationUpdated: gql`
+      subscription ConversationUpdated{
+        conversationUpdated {
+          conversation {
+            ${ConversationFields}
+          }
         }
       }
     `,
