@@ -9,10 +9,12 @@ interface IMessageItemProps {
 }
 
 const formatRelativeLocale = {
-  lastWeek: "eeee",
-  yesterday: "Yesterday",
+  lastWeek: "'last' eeee 'at' p",
+  yesterday: "'yesterday",
   today: "p",
-  other: "MM/dd/yy",
+  tomorrow: "'tomorrow at' p",
+  nextWeek: "eeee 'at' p",
+  other: 'P'
 };
 
 const MessageItem: React.FunctionComponent<IMessageItemProps> = ({ message, sentByMe }) => {
