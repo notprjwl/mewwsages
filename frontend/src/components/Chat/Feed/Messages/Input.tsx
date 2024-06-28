@@ -6,6 +6,7 @@ import { ObjectId } from "bson";
 import toast from "react-hot-toast";
 import MessageOperations from "../../../../graphql/operations/message";
 import { sendMessageArguments } from "../../../../../../backend/src/util/types";
+import { MessagesData } from "@/src/util/types";
 interface IMessageInputProps {
   session: Session;
   conversationId: string;
@@ -34,6 +35,44 @@ const MessageInput: React.FunctionComponent<IMessageInputProps> = ({ session, co
       const { data, errors } = await sendMessage({
         variables: {
           ...newMessage,
+        },
+        // optimistic response getting the data from the apollo cache before the server sends the success response back
+        optimisticResponse: {
+          sendMessage: true,
+        },
+        // here we grab the existing messages from the cache
+        update: (cache) => {
+          const existing = cache.readQuery<MessagesData>({
+            query: MessageOperations.Query.messages,
+            variables: { conversationId },
+          }) as MessagesData;
+
+          // we update it with the new message and write the data to the cache
+          cache.writeQuery<MessagesData, { conversationId: string }>({
+            query: MessageOperations.Query.messages,
+            variables: { conversationId },
+            data: {
+              ...existing,
+              messages: [
+                {
+                  id: messageId,
+                  senderId: session.user.id,
+                  conversationId,
+                  body: messageBody,
+                  sender: {
+                    id: session.user.id,
+                    username: session.user.username,
+                    image: session.user.image,
+                  },
+                  image: null,
+                  createdAt: new Date(Date.now()),
+                  updatedAt: new Date(Date.now()),
+                },
+                ...existing.messages,
+              ],
+            }, 
+          });
+          setMessageBody("");
         },
       });
 
