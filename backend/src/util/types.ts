@@ -56,6 +56,12 @@ export interface ConversationCreatedSubscriptionPayload {
   conversationCreated: ConversationPopulated;
 }
 
+export interface ConversationUpdatedSubscriptionPayload {
+  conversationUpdated: {
+    conversation: ConversationPopulated;
+  }
+}
+
 /**
  * MESSAGES
  */
