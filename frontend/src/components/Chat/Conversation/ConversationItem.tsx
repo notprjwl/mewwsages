@@ -21,10 +21,10 @@ interface ConversationItemProps {
   conversation: ConversationPopulated;
   onClick: () => void;
   isSelected: boolean;
-  // hasSeenLatestMessage: boolean | undefined;
+  hasSeenLatestMessage?: boolean;
   // onDeleteConversation: (conversationId: string) => void;
   //   onEditConversation?: () => void;
-  //   hasSeenLatestMessage?: boolean;
+  // hasSeenLatestMessage?: boolean;
   //   selectedConversationId?: string;
   //   onLeaveConversation?: (conversation: ConversationPopulated) => void;
 }
@@ -35,7 +35,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
   conversation,
   onClick,
   isSelected,
-  // hasSeenLatestMessage,
+  hasSeenLatestMessage,
   // onDeleteConversation,
   //   selectedConversationId,
   //   onEditConversation,
@@ -52,9 +52,20 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
     }
   };
 
-
   return (
-    <Stack direction='row' align='center' justify='space-between' mb={2} p={2} cursor='pointer' borderRadius={4} bg={isSelected ? "whiteAlpha.200" : "none"} _hover={{ bg: "whiteAlpha.200" }} onClick={handleClick} onContextMenu={handleClick} position='relative'>
+    <Stack
+      direction='row'
+      align='center'
+      justify='space-between'
+      mb={2}
+      p={2}
+      cursor='pointer'
+      borderRadius={4}
+      bg={isSelected ? "whiteAlpha.200" : "none"}
+      _hover={{ bg: "whiteAlpha.200" }}
+      onClick={handleClick}
+      onContextMenu={handleClick}
+      position='relative'>
       <Menu isOpen={menuOpen} onClose={() => setMenuOpen(false)}>
         <MenuList bg='#2d2d2d'>
           <MenuItem
@@ -100,30 +111,43 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
           )} */}
         </MenuList>
       </Menu>
-      <Flex position='absolute' left='-6px' >
-        {/* {hasSeenLatestMessage === false && <GoDotFill fontSize={18} color='#6B46C1' />} */}
+      <Flex position='absolute' left='-6px'>
+        {hasSeenLatestMessage === false && <GoDotFill fontSize={18} color='#6B46C1' />}
       </Flex>
-      <Avatar src={`${conversation.participants.find((p) => p.user.id !== userId)?.user.image}`} size={["md"]} />
+      <Avatar
+        src={`${conversation.participants.find((p) => p.user.id !== userId)?.user.image}`}
+        size={["md"]}
+      />
       <Flex justify='space-between' width='100%' height='100%'>
         <Flex direction='column' width='70%' height='100%'>
-          <Text fontWeight={600} whiteSpace='nowrap' fontSize={["sm", "md"]} overflow='hidden' textOverflow='ellipsis'>
+          <Text
+            fontWeight={600}
+            whiteSpace='nowrap'
+            fontSize={["sm", "md"]}
+            overflow='hidden'
+            textOverflow='ellipsis'>
             {formatUsernames(conversation.participants, userId)}
           </Text>
           {conversation.latestMessage && (
             <Box width='140%' maxWidth='360px'>
-              <Text color='whiteAlpha.700' whiteSpace='nowrap' overflow='hidden' textOverflow='ellipsis'>
+              <Text
+                color='whiteAlpha.700'
+                whiteSpace='nowrap'
+                overflow='hidden'
+                textOverflow='ellipsis'>
                 {conversation.latestMessage.body}
               </Text>
             </Box>
           )}
         </Flex>
-        <Text color='whiteAlpha.700' fontSize="sm" textAlign='right' position='absolute' right={4}>
+        <Text color='whiteAlpha.700' fontSize='sm' textAlign='right' position='absolute' right={4}>
           {formatRelative(new Date(conversation.updatedAt), new Date(), {
             locale: {
               ...enUS,
-              formatRelative: (token) => formatRelativeLocale[token as keyof typeof formatRelativeLocale],
+              formatRelative: (token) =>
+                formatRelativeLocale[token as keyof typeof formatRelativeLocale],
             },
-          })} 
+          })}
         </Text>
       </Flex>
     </Stack>
