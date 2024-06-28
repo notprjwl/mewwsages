@@ -25,19 +25,16 @@ const Messages: React.FunctionComponent<IMessagesProps> = ({ userId, conversatio
     onCompleted: () => {},
   });
 
-  if (error) {
-    return null;
-  }
-
+  
   // const subscribeToMoreMessages = (conversationId: string) => {
   //   return subscribeToMore({
   //     document: MessageOperations.Subscription.messageSent,
   //     variables: {
-  //       conversationId,
-  //     },
-  //     updateQuery: (prev, { subscriptionData }: MessageSubscriptionData) => {
+    //       conversationId,
+    //     },
+    //     updateQuery: (prev, { subscriptionData }: MessageSubscriptionData) => {
   //       if (!subscriptionData.data) return prev;
-
+  
   //       const newMessage = subscriptionData.data.messageSent;
 
   //       return Object.assign({}, prev, {
@@ -51,7 +48,7 @@ const Messages: React.FunctionComponent<IMessagesProps> = ({ userId, conversatio
   // };
 
   // useEffect(() => {
-  //   subscribeToMoreMessages(conversationId)
+    //   subscribeToMoreMessages(conversationId)
   // }, [conversationId])
   useEffect(() => {
     const subscribeToMoreMessages = (conversationId: string) => {
@@ -60,32 +57,36 @@ const Messages: React.FunctionComponent<IMessagesProps> = ({ userId, conversatio
         variables: { conversationId },
         updateQuery: (prev, { subscriptionData }) => {
           if (!subscriptionData?.data) return prev;
-
+          
           const newMessage = subscriptionData.data.messageSent;
 
           // Check if the new message already exists in messages array
           const alreadyExists = prev.messages.some((msg) => msg.id === newMessage.id);
           if (alreadyExists) return prev;
-
+          
           // Append new message to messages array
           return {
             ...prev,
-            messages: [newMessage, ...prev.messages],
+            messages: newMessage.sender.id === userId ? prev.messages : [newMessage, ...prev.messages],
           };
         },
       });
     };
-
+    
     const unsubscribe = subscribeToMoreMessages(conversationId);
-
+    
     // Clean up subscription on component unmount
     return () => {
       unsubscribe();
     };
   }, [conversationId, subscribeToMore]);
-
+  
+  if (error) {
+    return null;
+  }
+  
   console.log("HERE IS THE MESSAGES DATA", data);
-
+  
   return (
     <Flex direction='column' justify='flex-end' overflow='hidden'>
       {loading && (
@@ -96,7 +97,7 @@ const Messages: React.FunctionComponent<IMessagesProps> = ({ userId, conversatio
       {data?.messages && (
         <Flex direction='column-reverse' overflowY='scroll' height='100%'>
           {data.messages.map((message) => (
-            <MessageItem key={message.id} message={message} sentByMe={message.sender.id === userId}/>
+            <MessageItem key={message.id} message={message} sentByMe={message.sender.id === userId} />
             // <div key={message.id}>{message.body}</div>
           ))}
         </Flex>
