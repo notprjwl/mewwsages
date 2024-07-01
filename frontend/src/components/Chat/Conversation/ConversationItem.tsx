@@ -21,8 +21,8 @@ interface ConversationItemProps {
   conversation: ConversationPopulated;
   onClick: () => void;
   isSelected: boolean;
-  hasSeenLatestMessage?: boolean;
-  // onDeleteConversation: (conversationId: string) => void;
+  hasSeenLatestMessage: boolean | undefined;
+  onDeleteConversation: (conversationId: string) => void;
   //   onEditConversation?: () => void;
   // hasSeenLatestMessage?: boolean;
   //   selectedConversationId?: string;
@@ -36,7 +36,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
   onClick,
   isSelected,
   hasSeenLatestMessage,
-  // onDeleteConversation,
+  onDeleteConversation,
   //   selectedConversationId,
   //   onEditConversation,
   //   onLeaveConversation,
@@ -59,6 +59,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
       justify='space-between'
       mb={2}
       p={2}
+      px={4}
       cursor='pointer'
       borderRadius={4}
       bg={isSelected ? "whiteAlpha.200" : "none"}
@@ -67,7 +68,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
       onContextMenu={handleClick}
       position='relative'>
       <Menu isOpen={menuOpen} onClose={() => setMenuOpen(false)}>
-        <MenuList bg='#2d2d2d'>
+        <MenuList bg='#2d2d2d' p={0} borderRadius={10}>
           <MenuItem
             icon={<AiOutlineEdit fontSize={20} />}
             onClick={(event) => {
@@ -75,17 +76,22 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
               //   onEditConversation();
             }}
             bg='#2d2d2d'
-            _hover={{ bg: "whiteAlpha.300" }}>
+            _hover={{ bg: "whiteAlpha.300" }}
+            borderRadius={10}
+            borderBottomRadius={0}>
             Edit
           </MenuItem>
           <MenuItem
             icon={<MdDeleteOutline fontSize={20} />}
             onClick={(event) => {
               event.stopPropagation();
-              // onDeleteConversation(conversation.id);
+              onDeleteConversation(conversation.id);
             }}
             bg='#2d2d2d'
-            _hover={{ bg: "whiteAlpha.300" }}>
+            _hover={{ bg: "whiteAlpha.300" }}
+            borderRadius={10} 
+            borderTopRadius={0}
+            >
             Delete
           </MenuItem>
           {/* {conversation.participants.length > 2 ? (
@@ -111,7 +117,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
           )} */}
         </MenuList>
       </Menu>
-      <Flex position='absolute' left='-6px'>
+      <Flex position='absolute' left='-3px'>
         {hasSeenLatestMessage === false && <GoDotFill fontSize={18} color='#6B46C1' />}
       </Flex>
       <Avatar
