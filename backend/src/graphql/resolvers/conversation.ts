@@ -1,12 +1,13 @@
 import { Prisma } from "@prisma/client";
+import { GraphQLError } from "graphql";
+import { withFilter } from "graphql-subscriptions";
+import { userIsConversationParticipant } from "../../util/functions";
 import {
+  ConversationDeletedSubscriptionPayload,
   ConversationPopulated,
   ConversationUpdatedSubscriptionPayload,
   GraphQLContext,
 } from "../../util/types";
-import { withFilter } from "graphql-subscriptions";
-import { GraphQLError } from "graphql";
-import { userIsConversationParticipant } from "../../util/functions";
 
 /**
  * a query is a request for data, a mutation is a request to change data, and a resolver is the function that gets the data for a specific field in your schema.
@@ -45,8 +46,8 @@ const resolvers = {
           },
           include: conversationPopulated,
         });
-        return conversations;
         // return conversations.filter((conversation) => !!conversation.participants.find((p) => p.userId === userId));
+        return conversations;
       } catch (error: any) {
         console.log("CONVERSATIONS ERROR", error);
         throw new GraphQLError(error?.message);
@@ -59,10 +60,10 @@ const resolvers = {
       args: { participantIds: Array<string> },
       context: GraphQLContext
     ): Promise<{ conversationId: string }> => {
-      const { session, prisma, pubsub } = context;
       const { participantIds } = args;
+      const { session, prisma, pubsub } = context;
 
-      // console.log("PARTICIPANT IDS", participantIds);
+      console.log("PARTICIPANT IDS", participantIds);
 
       if (!session?.user) {
         throw new GraphQLError("NOT AUTHORIZED");
@@ -98,7 +99,7 @@ const resolvers = {
         return {
           conversationId: conversation.id,
         };
-      } catch (error) {
+      } catch (error: any) {
         console.log("CREATE CONVERSATION ERROR", error);
         throw new GraphQLError("ERROR CREATING CONVERSATION");
       }
@@ -146,6 +147,54 @@ const resolvers = {
         throw new GraphQLError(error?.message);
       }
     },
+    deleteConversation: async (
+      _: any,
+      args: { conversationId: string },
+      context: GraphQLContext
+    ): Promise<boolean> => {
+      const { session, prisma, pubsub } = context;
+      const { conversationId } = args;
+
+      if (!session?.user) {
+        throw new GraphQLError("Not authorized");
+      }
+
+      try {
+        /**
+         * Delete conversation and all the related entities
+         */
+
+        await prisma.conversationParticipant.deleteMany({
+          where: {
+            conversationId,
+          },
+        });
+    
+        // Delete related Message entities next
+        await prisma.message.deleteMany({
+          where: {
+            conversationId,
+          },
+        });
+    
+        // Delete the Conversation entity
+        const deletedConversation = await prisma.conversation.delete({
+          where: {
+            id: conversationId,
+          },
+          include: conversationPopulated,
+        });
+
+        pubsub.publish("CONVERSATION_DELETED", {
+          conversationDeleted: deletedConversation,
+        });
+
+        return true;
+      } catch (error: any) {
+        console.log("deleteConversation error", error);
+        throw new GraphQLError("FAILED TO DELETE CONVERSATION");
+      }
+    },
   },
 
   Subscription: {
@@ -168,25 +217,15 @@ const resolvers = {
           const { pubsub } = context;
           return pubsub.asyncIterator(["CONVERSATION_CREATED"]);
         },
-        (
-          payload: ConversationCreatedSubscriptionPayload,
-          variables: any,
-          context: GraphQLContext
-        ) => {
+        (payload: ConversationCreatedSubscriptionPayload, _: any, context: GraphQLContext) => {
           const { session } = context;
+          if (!session?.user) throw new GraphQLError("Not authorized");
           const {
             conversationCreated: { participants },
           } = payload;
 
-          if (!session?.user) {
-            console.log("Not authorized");
-            return false;
-          }
-
-          const userIsParticipant = userIsConversationParticipant(participants, session.user.id);
-
-          console.log("User is participant:", userIsParticipant);
-
+          const userIsParticipant = userIsConversationParticipant(participants, session?.user?.id);
+          console.log("user is participant", userIsParticipant);
           return userIsParticipant;
         }
       ),
@@ -200,7 +239,7 @@ const resolvers = {
         (payload: ConversationUpdatedSubscriptionPayload, _: any, context: GraphQLContext) => {
           const { session } = context;
 
-          console.log("HERE IS THE PAYLOAD", payload)
+          console.log("HERE IS THE PAYLOAD", payload);
 
           if (!session?.user) {
             console.log("Not authorized");
@@ -215,12 +254,33 @@ const resolvers = {
             },
           } = payload;
 
-          const userIsParticipant = userIsConversationParticipant(participants, userId);
-
-          return userIsParticipant;
+          // console.log(userIsParticipant);
+          return userIsConversationParticipant(participants, userId);
         }
       ),
     },
+    conversationDeleted: {
+      subscribe: withFilter(
+        (_: any, __: any, context: GraphQLContext) => {
+          const { pubsub } = context;
+          return pubsub.asyncIterator(["CONVERSATION_DELETED"]);
+        },
+        (payload: ConversationDeletedSubscriptionPayload, _: any, context: GraphQLContext) => {
+          const { session } = context;
+
+          if (!session?.user) {
+            throw new GraphQLError("Not authorized");
+          }
+
+          const { id: userId } = session.user;
+          const {
+            conversationDeleted: { participants },
+          } = payload;
+
+          return userIsConversationParticipant(participants, userId);
+        }
+      ),
+    }, 
   },
 };
 // }
@@ -250,6 +310,7 @@ export const conversationPopulated = Prisma.validator<Prisma.ConversationInclude
         select: {
           id: true,
           username: true,
+          image: true,
         },
       },
     },
