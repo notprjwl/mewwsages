@@ -32,7 +32,7 @@ const typeDefs = gql`
     createUsername(username: String): createUsernameResponse
   }
 
-  # this is how we create a custom types in querying lanugage
+  # this is how we create a custom types in querying language
   type createUsernameResponse {
     success: Boolean
     error: String
