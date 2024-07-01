@@ -5,7 +5,7 @@ import express from "express";
 import http from "http";
 import cors from "cors";
 import { json } from "body-parser";
-import { makeExecutableSchema } from '@graphql-tools/schema'
+import { makeExecutableSchema } from "@graphql-tools/schema";
 import typeDefs from "./graphql/typeDefs";
 import resolvers from "./graphql/resolvers";
 import { getSession } from "next-auth/react";
@@ -26,7 +26,6 @@ async function main() {
 
   const app = express();
   const httpServer = http.createServer(app);
-  
   const prisma = new PrismaClient();
   const pubsub = new PubSub();
 
@@ -41,7 +40,6 @@ async function main() {
 
   // Hand in the schema we just created and have the
   // WebSocketServer start listening.
-
 
   /**
    * Context parameters
@@ -61,7 +59,27 @@ async function main() {
     wsServer
   );
 
-
+  // const serverCleanup = useServer(
+  //   {
+  //     schema,
+  //     context: async (ctx: SubscriptionContext): Promise<GraphQLContext> => {
+  //       if (ctx.connectionParams && ctx.connectionParams.session) {
+  //         const { session } = ctx.connectionParams;
+  //         return {
+  //           session,
+  //           prisma,
+  //           pubsub,
+  //         };
+  //       }
+  //       return {
+  //         session: null,
+  //         prisma,
+  //         pubsub,
+  //       };
+  //     },
+  //   },
+  //   wsServer
+  // );
 
   const server = new ApolloServer({
     schema,
