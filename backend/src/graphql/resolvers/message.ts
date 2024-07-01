@@ -1,5 +1,10 @@
 import { GraphQLError } from "graphql";
-import { GraphQLContext, MessagePopulated, MessageSentSubscriptionPayload, sendMessageArguments } from "../../util/types";
+import {
+  GraphQLContext,
+  MessagePopulated,
+  MessageSentSubscriptionPayload,
+  sendMessageArguments,
+} from "../../util/types";
 import { Prisma } from "@prisma/client";
 import { withFilter } from "graphql-subscriptions";
 import { conversationPopulated } from "./conversation";
@@ -8,7 +13,11 @@ import { userIsConversationParticipant } from "../../util/functions";
 const resolvers = {
   Query: {
     // fetching all the messages when you click a chat
-    messages: async (_: any, args: { conversationId: string }, context: GraphQLContext): Promise<Array<MessagePopulated>> => {
+    messages: async (
+      _: any,
+      args: { conversationId: string },
+      context: GraphQLContext
+    ): Promise<Array<MessagePopulated>> => {
       const { session, prisma } = context;
       const { conversationId } = args;
 
@@ -61,7 +70,11 @@ const resolvers = {
   },
   Mutation: {
     // sendMessage function
-    sendMessage: async (_: any, args: sendMessageArguments, context: GraphQLContext): Promise<boolean> => {
+    sendMessage: async (
+      _: any,
+      args: sendMessageArguments,
+      context: GraphQLContext
+    ): Promise<boolean> => {
       const { session, prisma, pubsub } = context;
       const { id: messageId, conversationId, senderId, body } = args;
 
@@ -139,13 +152,12 @@ const resolvers = {
 
         // publishing event
         pubsub.publish("MESSAGE_SENT", { messageSent: newMessage });
-        // pubsub.publish("CONVERSATION_UPDATED", { conversationUpdated: { conversation } });
+        pubsub.publish("CONVERSATION_UPDATED", { conversationUpdated: { conversation } });
+        return true;
       } catch (error: any) {
         console.log("sendMessage error", error);
         throw new GraphQLError(error?.message);
       }
-
-      return true;
     },
   },
   Subscription: {
@@ -155,7 +167,11 @@ const resolvers = {
           const { pubsub } = context;
           return pubsub.asyncIterator(["MESSAGE_SENT"]);
         },
-        (payload: MessageSentSubscriptionPayload, args: { conversationId: string }, context: GraphQLContext) => {
+        (
+          payload: MessageSentSubscriptionPayload,
+          args: { conversationId: string },
+          context: GraphQLContext
+        ) => {
           return payload.messageSent.conversationId === args.conversationId;
         }
       ),
