@@ -6,6 +6,10 @@ import { Arimo } from "next/font/google";
 import { ConversationPopulated } from "../../../../../backend/src/util/types";
 import ConversationItem from "./ConversationItem";
 import { useRouter } from "next/router";
+import { GraphQLError } from "graphql";
+import { useMutation } from "@apollo/client";
+import ConversationOperations from "../../../graphql/operations/conversation";
+import toast from "react-hot-toast";
 
 interface IConversationListProps {
   session: Session;
@@ -19,6 +23,9 @@ const ConversationList: React.FC<IConversationListProps> = ({
   onViewConversation,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [deleteConversation] = useMutation<{ deleteConversation: boolean; conversationId: string }>(
+    ConversationOperations.Mutations.deleteConversation
+  );
   const onOpen = () => setIsOpen(true);
   const onClose = () => setIsOpen(false);
 
@@ -27,6 +34,37 @@ const ConversationList: React.FC<IConversationListProps> = ({
   const {
     user: { id: userId, image },
   } = session;
+
+  const onDeleteConversation = async (conversationId: string) => {
+    try {
+      toast.promise(
+        deleteConversation({
+          variables: {
+            conversationId,
+          },
+          update: () => {
+            router.replace(
+              typeof process.env.NEXT_PUBLIC_BASE_URL === "string"
+                ? process.env.NEXT_PUBLIC_BASE_URL
+                : ""
+            );
+          },
+        }),
+        {
+          loading: "Deleting conversation...",
+          success: "Conversation deleted successfully!",
+          error: "Failed to delete conversation",
+        }
+      );
+    } catch (error: any) {
+      console.log("onDeleteConversation error: ", error);
+      throw new GraphQLError("Error deleting conversation");
+    }
+  };
+
+  const sortedConversations = [...conversations].sort(
+    (a, b) => b.updatedAt.valueOf() - a.updatedAt.valueOf()
+  );
 
   return (
     <Box width='100%'>
@@ -53,8 +91,7 @@ const ConversationList: React.FC<IConversationListProps> = ({
         </Text>
       </Box>
       <ConversationModal session={session} isOpen={isOpen} onClose={onClose} />
-      {conversations.map((conversation) => {
-
+      {sortedConversations.map((conversation) => {
         const participant = conversation.participants.find((p) => p.user.id === userId);
 
         return (
@@ -64,7 +101,10 @@ const ConversationList: React.FC<IConversationListProps> = ({
             onClick={() => onViewConversation(conversation.id, participant?.hasSeenLatestMessage)}
             isSelected={conversation.id === router.query.conversationId}
             userId={userId}
-            image={image} hasSeenLatestMessage={participant?.hasSeenLatestMessage}/>
+            image={image}
+            hasSeenLatestMessage={participant?.hasSeenLatestMessage}
+            onDeleteConversation={onDeleteConversation}
+          />
         );
       })}
     </Box>
