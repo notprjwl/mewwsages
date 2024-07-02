@@ -1,8 +1,7 @@
 import { Session } from "next-auth";
 import ConversationModal from "./Modal/ConversationModal";
-import { Box, Text } from "@chakra-ui/react";
+import { Box, Button, Text } from "@chakra-ui/react";
 import { useState } from "react";
-import { Arimo } from "next/font/google";
 import { ConversationPopulated } from "../../../../../backend/src/util/types";
 import ConversationItem from "./ConversationItem";
 import { useRouter } from "next/router";
@@ -10,6 +9,7 @@ import { GraphQLError } from "graphql";
 import { useMutation } from "@apollo/client";
 import ConversationOperations from "../../../graphql/operations/conversation";
 import toast from "react-hot-toast";
+import { signOut } from "next-auth/react";
 
 interface IConversationListProps {
   session: Session;
@@ -67,7 +67,7 @@ const ConversationList: React.FC<IConversationListProps> = ({
   );
 
   return (
-    <Box width='100%'>
+    <Box width={{ base: "100%", md: "300px" }} position='relative' height='100%' overflow='hidden'>
       <Text
         fontSize={25}
         fontWeight={500}
@@ -107,6 +107,15 @@ const ConversationList: React.FC<IConversationListProps> = ({
           />
         );
       })}
+      <Box
+        position='absolute'
+        bottom={0}
+        left={0}
+        width='100%'
+        px={8}
+      >
+        <Button width="100%" onClick={()=> signOut()}>Logout</Button>
+      </Box>
     </Box>
   );
 };
