@@ -3,13 +3,17 @@ import { Session } from "next-auth";
 import ConversationList from "./ConversationList";
 import { Box } from "@chakra-ui/react";
 import ConversationOperations from "../../../graphql/operations/conversation";
-import { ConversationsData, ConversationUpdatedData } from "@/src/util/types";
-import { ConversationPopulated, ParticipantPopulated } from "../../../../../backend/src/util/types";
+import {
+  ConversationDeletedData,
+  ConversationsData,
+  ConversationUpdatedData,
+} from "@/src/util/types";
+import { ParticipantPopulated } from "../../../../../backend/src/util/types";
 import { ConversationCreatedSubscriptionData } from "../../../util/types";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/router";
 import SkeletonLoader from "../../common/SkeletonLoader";
-import toast from "react-hot-toast";
+
 
 interface ConversationsWrapperProps {
   session: Session;
@@ -38,7 +42,7 @@ const ConversationsWrapper: React.FC<ConversationsWrapperProps> = ({ session }) 
       onData: ({ client, data }) => {
         const { data: subscriptionData } = data;
 
-        console.log("ON DATA FIRING", subscriptionData);
+        // console.log("ON DATA FIRING", subscriptionData);
 
         if (!subscriptionData) return;
 
@@ -51,6 +55,44 @@ const ConversationsWrapper: React.FC<ConversationsWrapperProps> = ({ session }) 
           onViewConversation(conversationId, false);
           return;
         }
+      },
+    }
+  );
+
+  useSubscription<ConversationDeletedData>(
+    ConversationOperations.Subscriptions.conversationDeleted,
+    {
+      onData: ({ client, data }) => {
+        const { data: subscriptionData } = data;
+
+        if (!subscriptionData) return;
+
+        const existing = client.readQuery<ConversationsData>({
+          query: ConversationOperations.Queries.conversations,
+        });
+
+        if (!existing) return;
+
+        const { conversations } = existing;
+        const {
+          conversationDeleted: { id: deleteConversationId },
+        } = subscriptionData;
+
+        // Use setTimeout to delay router push
+        setTimeout(() => {
+          client.writeQuery<ConversationsData>({
+            query: ConversationOperations.Queries.conversations,
+            data: {
+              conversations: conversations.filter(
+                (conversation) => conversation.id !== deleteConversationId
+              ),
+            },
+          });
+
+          if (router.isReady && conversationId === deleteConversationId) {
+            router.push("/");
+          }
+        }, 1000); 
       },
     }
   );
@@ -198,9 +240,7 @@ const ConversationsWrapper: React.FC<ConversationsWrapperProps> = ({ session }) 
            */
           const participants = [...participantsFragment.participants];
 
-          const userParticipantIdx = participants.findIndex(
-            (p) => p.user.id === userId
-          );
+          const userParticipantIdx = participants.findIndex((p) => p.user.id === userId);
 
           /**
            * Should always be found
@@ -247,11 +287,11 @@ const ConversationsWrapper: React.FC<ConversationsWrapperProps> = ({ session }) 
       updateQuery: (prev, { subscriptionData }: ConversationCreatedSubscriptionData) => {
         if (!subscriptionData.data) return prev;
 
-        console.log("SUBSCRIPTION DATA", subscriptionData);
+        // console.log("SUBSCRIPTION DATA", subscriptionData);
 
         const newConversation = subscriptionData.data.conversationCreated;
 
-        console.log("SUBSCRIPTION FIRED", newConversation);
+        // console.log("SUBSCRIPTION FIRED", newConversation);
         const exists = prev.conversations.find(
           (conversation) => conversation.id === newConversation.id
         );
