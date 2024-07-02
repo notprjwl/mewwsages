@@ -89,9 +89,8 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
             }}
             bg='#2d2d2d'
             _hover={{ bg: "whiteAlpha.300" }}
-            borderRadius={10} 
-            borderTopRadius={0}
-            >
+            borderRadius={10}
+            borderTopRadius={0}>
             Delete
           </MenuItem>
           {/* {conversation.participants.length > 2 ? (
@@ -135,7 +134,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
             {formatUsernames(conversation.participants, userId)}
           </Text>
           {conversation.latestMessage && (
-            <Box width='140%' maxWidth='360px'>
+            <Box width={{base: "126%", md: "114%" }}>
               <Text
                 color='whiteAlpha.700'
                 whiteSpace='nowrap'
