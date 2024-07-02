@@ -153,47 +153,38 @@ const resolvers = {
       context: GraphQLContext
     ): Promise<boolean> => {
       const { session, prisma, pubsub } = context;
+
       const { conversationId } = args;
 
-      if (!session?.user) {
-        throw new GraphQLError("Not authorized");
-      }
+      if (!session?.user) throw new GraphQLError("Not authorized");
 
       try {
-        /**
-         * Delete conversation and all the related entities
-         */
-
-        await prisma.conversationParticipant.deleteMany({
-          where: {
-            conversationId,
-          },
-        });
-    
-        // Delete related Message entities next
-        await prisma.message.deleteMany({
-          where: {
-            conversationId,
-          },
-        });
-    
-        // Delete the Conversation entity
-        const deletedConversation = await prisma.conversation.delete({
-          where: {
-            id: conversationId,
-          },
-          include: conversationPopulated,
-        });
-
+        const [deletedConversation] = await prisma.$transaction([
+          prisma.conversation.delete({
+            where: {
+              id: conversationId,
+            },
+            include: conversationPopulated,
+          }),
+          prisma.conversationParticipant.deleteMany({
+            where: {
+              conversationId,
+            },
+          }),
+          prisma.message.deleteMany({
+            where: {
+              conversationId,
+            },
+          }),
+        ]);
         pubsub.publish("CONVERSATION_DELETED", {
           conversationDeleted: deletedConversation,
         });
-
-        return true;
       } catch (error: any) {
-        console.log("deleteConversation error", error);
-        throw new GraphQLError("FAILED TO DELETE CONVERSATION");
+        console.log("deleteConversation error:", error);
+        throw new GraphQLError("Failed to delete conversation");
       }
+      return true;
     },
   },
 
@@ -263,9 +254,10 @@ const resolvers = {
       subscribe: withFilter(
         (_: any, __: any, context: GraphQLContext) => {
           const { pubsub } = context;
+
           return pubsub.asyncIterator(["CONVERSATION_DELETED"]);
         },
-        (payload: ConversationDeletedSubscriptionPayload, _: any, context: GraphQLContext) => {
+        (payload: ConversationDeletedSubscriptionPayload, _, context: GraphQLContext) => {
           const { session } = context;
 
           if (!session?.user) {
@@ -280,7 +272,7 @@ const resolvers = {
           return userIsConversationParticipant(participants, userId);
         }
       ),
-    }, 
+    },
   },
 };
 // }
