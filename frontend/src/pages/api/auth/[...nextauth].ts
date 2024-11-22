@@ -19,4 +19,5 @@ export default NextAuth({
       return { ...session, user: { ...session.user, ...user } };
     },
   },
+  debug: true,
 });
