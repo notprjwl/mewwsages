@@ -2,7 +2,7 @@ import { Session } from "next-auth";
 import ConversationModal from "./Modal/ConversationModal";
 import { Box, Button, Text } from "@chakra-ui/react";
 import { useState } from "react";
-import { ConversationPopulated } from "../../../../../backend/src/util/types";
+import { ConversationPopulated } from "../../../util/types";
 import ConversationItem from "./ConversationItem";
 import { useRouter } from "next/router";
 import { GraphQLError } from "graphql";

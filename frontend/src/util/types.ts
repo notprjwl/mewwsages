@@ -122,3 +122,11 @@ export interface MessageSubscriptionData {
     };
   };
 }
+
+
+export interface sendMessageArguments {
+  id: string;
+  conversationId: string;
+  senderId: string;
+  body: string;
+}

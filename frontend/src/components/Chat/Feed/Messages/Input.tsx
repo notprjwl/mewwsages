@@ -5,7 +5,7 @@ import { useState } from "react";
 import { ObjectId } from "bson";
 import toast from "react-hot-toast";
 import MessageOperations from "../../../../graphql/operations/message";
-import { sendMessageArguments } from "../../../../../../backend/src/util/types";
+import { sendMessageArguments } from "../../../../util/types";
 import { MessagesData } from "@/src/util/types";
 interface IMessageInputProps {
   session: Session;

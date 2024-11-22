@@ -8,7 +8,7 @@ import {
   ConversationsData,
   ConversationUpdatedData,
 } from "@/src/util/types";
-import { ParticipantPopulated } from "../../../../../backend/src/util/types";
+import { ParticipantPopulated } from "../../../util/types";
 import { ConversationCreatedSubscriptionData } from "../../../util/types";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
