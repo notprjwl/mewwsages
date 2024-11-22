@@ -1,4 +1,4 @@
-import { ConversationPopulated, MessagePopulated } from "../../../backend/src/util/types";
+// import { ConversationPopulated, MessagePopulated } from "../../../backend/src/util/types";
 
 /**
  * USERS
@@ -28,9 +28,34 @@ export interface SearchedUser {
   image: string;
 }
 
+export interface User {
+  id: string;
+  username: string;
+  image: string;
+}
+
 /**
  * CONVERSATIONS
  */
+
+// adding import types to the frontend
+export interface ParticipantPopulated {
+  id: string;
+  userId: string;
+  conversationId: string;
+  hasSeenLatestMessage: boolean;
+  user: User;
+}
+
+
+export interface ConversationPopulated {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  latestMessage: MessagePopulated;
+  participants: ParticipantPopulated[];
+}
+
 
 export interface ConversationsData {
   conversations: Array<ConversationPopulated>;
@@ -69,6 +94,17 @@ export interface ConversationDeletedData {
 /**
  * MESSAGES
  */
+
+// adding import types to the frontend
+export interface MessagePopulated {
+  id: string;
+  conversationId: string;
+  senderId: string;
+  body: string;
+  createdAt: string;
+  sender: User;
+}
+
 
 export interface MessagesData {
   messageSent: any;
