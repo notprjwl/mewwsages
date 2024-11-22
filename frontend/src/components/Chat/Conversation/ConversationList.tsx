@@ -62,9 +62,12 @@ const ConversationList: React.FC<IConversationListProps> = ({
     }
   };
 
-  const sortedConversations = [...conversations].sort(
-    (a, b) => b.updatedAt.valueOf() - a.updatedAt.valueOf()
-  );
+  const sortedConversations = [...conversations].sort((a, b) => {
+    const aUpdatedAt = new Date(a.updatedAt).valueOf(); 
+    const bUpdatedAt = new Date(b.updatedAt).valueOf();
+    return bUpdatedAt - aUpdatedAt; 
+  });
+  
 
   return (
     <Box width={{ base: "100%", md: "300px" }} position='relative' height='100%' overflow='hidden'>
