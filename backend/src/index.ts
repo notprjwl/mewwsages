@@ -102,10 +102,20 @@ async function main() {
   });
   await server.start();
 
+  const allowedOrigins =
+    process.env.NODE_ENV === "production"
+      ? ["https://mewwsages.vercel.app"]
+      : ["http://localhost:3000"];
+
   const corsOptions = {
-    origin: process.env.CLIENT_ORIGIN,
+    origin: allowedOrigins,
     credentials: true,
   };
+
+  // const corsOptions = {
+  //   origin: process.env.CLIENT_ORIGIN,
+  //   credentials: true,
+  // };
 
   app.use(
     "/graphql",
