@@ -64,7 +64,7 @@ const MessageInput: React.FunctionComponent<IMessageInputProps> = ({ session, co
                     username: session.user.username,
                     image: session.user.image,
                   },
-                  image: null,
+                  // image: null,
                   createdAt: new Date(Date.now()),
                   updatedAt: new Date(Date.now()),
                 },

@@ -101,7 +101,8 @@ export interface MessagePopulated {
   conversationId: string;
   senderId: string;
   body: string;
-  createdAt: string;
+  createdAt: Date;
+  updatedAt: Date;
   sender: User;
 }
 
