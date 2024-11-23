@@ -8,5 +8,10 @@
         "source": "/(.*)",
         "destination": "/"
       }
-    ]
+    ],
+    "functions": {
+        "app/api/**/*": {
+          "maxDuration": 60 
+        }
+    }
 }
