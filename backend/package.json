@@ -32,6 +32,8 @@
     "@types/cors": "^2.8.17",
     "@types/lodash.merge": "^4.6.9",
     "@types/punycode": "^2.1.4",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
     "@types/ws": "^8.5.10",
     "nodemon": "^3.1.0",
     "prisma": "^4.0.0"
