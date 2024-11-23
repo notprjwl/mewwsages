@@ -38,3 +38,5 @@ next-env.d.ts
 .env*
 
 dist/
+
+# //npx prisma generate --schema=./src/prisma/schema.prisma && npm run dev
